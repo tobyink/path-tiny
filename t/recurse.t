@@ -4,7 +4,7 @@ use warnings;
 use Test::More 0.92;
 use File::Temp;
 use Test::Deep qw/cmp_deeply/;
-use File::pushd qw/tempd/;
+use File::chdir;
 use Config;
 
 use Path::Tiny;
@@ -12,7 +12,8 @@ use Path::Tiny;
 #--------------------------------------------------------------------------#
 
 subtest 'no symlinks' => sub {
-    my $wd = tempd;
+    my $tmpdir = File::Temp->newdir;
+    local $CWD = (my $wd = $tmpdir->dirname);
 
     my @tree = qw(
       aaaa.txt
@@ -50,7 +51,8 @@ subtest 'with symlinks' => sub {
     plan skip_all => "No symlink support"
       unless $Config{d_symlink};
 
-    my $wd = tempd;
+    my $tmpdir = File::Temp->newdir;
+    local $CWD = (my $wd = $tmpdir->dirname);
 
     my @tree = qw(
       aaaa.txt

@@ -4,7 +4,7 @@ use warnings;
 use Test::More 0.96;
 use Test::Deep '!blessed';
 use File::Spec::Unix;
-use File::pushd qw/tempd/;
+use File::chdir;
 
 use Path::Tiny;
 
@@ -52,7 +52,9 @@ subtest "tempfile handle" => sub {
 };
 
 subtest "survives absolute" => sub {
-    my $wd = tempd;
+    my $_tmpdir = File::Temp->newdir;
+    local $CWD = (my $wd = $_tmpdir->dirname);
+    
     my $tempdir = Path::Tiny->tempdir( DIR => '.' )->absolute;
     ok( -d $tempdir, "exists" );
 };
